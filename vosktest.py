@@ -55,7 +55,7 @@ def main():
             result = json.loads(rec.Result())
             text = result.get('text', '').lower()
             if text:
-                speach_queue.put(f"You said: {text}")
+                speech_queue.put(f"You said: {text}")
                 if "termination sequence initiate" in text:
                     speech_queue.put("Termination imminent")
                     speech_queue.put("__EXIT__")
