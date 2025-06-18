@@ -23,7 +23,7 @@ def main():
     print(f"Device sample rate: {device_sr} Hz")
     print(f"Resampling audio to {TARGET_SR} Hz for Vosk")
 
-    model = Model("models/vosk-model-en-us-0.15")
+    model = Model("models/vosk-model-small-en-us-0.15")
     rec = KaldiRecognizer(model, TARGET_SR)
 
     # Prepare resampler if needed
