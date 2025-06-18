@@ -55,7 +55,7 @@ def main():
             result = json.loads(rec.Result())
             text = result.get('text', '').lower()
             if text:
-                speech_queue.put(f"You said: {text}")
+                print(f"Recognized: {text}")
                 if "termination sequence initiate" in text:
                     speech_queue.put("Termination imminent")
                     speech_queue.put("__EXIT__")
@@ -67,16 +67,20 @@ def main():
         print("Listening (say 'termination sequence initiate' to stop)...")
         while True:
             time.sleep(0.1)
-            try:
-                to_speak = speech_queue.get_nowait()
-                if to_speak == "__EXIT__":
-                    engine.say("Goodbye.")
-                    engine.runAndWait()
+            spoken_any = False
+            while True:
+                try:
+                    to_speak = speech_queue.get_nowait()
+                    if to_speak == "__EXIT__":
+                        engine.say("Goodbye.")
+                        engine.runAndWait()
+                        return
+                    engine.say(to_speak)
+                    spoken_any = True
+                except queue.Empty:
                     break
-                engine.say(to_speak)
+            if spoken_any:
                 engine.runAndWait()
-            except queue.Empty:
-                continue
 
 if __name__ == "__main__":
     main()
