@@ -50,6 +50,9 @@ def main():
             text = result.get('text', '').lower()
             if text:
                 print(f"Recognized: {text}")
+                if "termination sequence initiate" in text:
+                    print("Termination command detected. Exiting...")
+                    sys.exit(0)
 
     with sd.RawInputStream(samplerate=device_sr, blocksize=8000, dtype='int16',
                            channels=1, callback=callback):
