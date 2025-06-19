@@ -5,14 +5,8 @@ import samplerate
 import time
 import json
 import sys
-import pyttsx3
-import queue
-
-engine = pyttsx3.init()
-engine.setProperty('rate', 150)
 
 TARGET_SR = 16000  # Vosk expects 16kHz audio
-speech_queue = queue.Queue()
 
 def get_default_input_samplerate():
     default_input_index = sd.default.device[0]
@@ -56,31 +50,12 @@ def main():
             text = result.get('text', '').lower()
             if text:
                 print(f"Recognized: {text}")
-                if "termination sequence initiate" in text:
-                    speech_queue.put("Termination imminent")
-                    speech_queue.put("__EXIT__")
-                else:
-                    speech_queue.put(f"You said: {text}")
 
     with sd.RawInputStream(samplerate=device_sr, blocksize=8000, dtype='int16',
                            channels=1, callback=callback):
         print("Listening (say 'termination sequence initiate' to stop)...")
         while True:
             time.sleep(0.1)
-            spoken_any = False
-            while True:
-                try:
-                    to_speak = speech_queue.get_nowait()
-                    if to_speak == "__EXIT__":
-                        engine.say("Goodbye.")
-                        engine.runAndWait()
-                        return
-                    engine.say(to_speak)
-                    spoken_any = True
-                except queue.Empty:
-                    break
-            if spoken_any:
-                engine.runAndWait()
 
 if __name__ == "__main__":
     main()
