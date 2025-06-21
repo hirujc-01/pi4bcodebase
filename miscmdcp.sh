@@ -1,6 +1,12 @@
-curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-  sudo gpg --dearmor -o /usr/share/keyrings/coral-edgetpu.gpg
+mkdir -p test_data
+cd test_data
 
-echo "deb [signed-by=/usr/share/keyrings/coral-edgetpu.gpg] \
-https://packages.cloud.google.com/apt coral-edgetpu-stable main" | \
-  sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
+wget https://github.com/google-coral/pycoral/raw/main/examples/test_data/parrot.jpg
+wget https://github.com/google-coral/pycoral/raw/main/examples/test_data/inat_bird_labels.txt
+wget https://github.com/google-coral/pycoral/raw/main/examples/test_data/mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite
+
+cd ..
+python3 classify_image.py \
+  --model test_data/mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite \
+  --labels test_data/inat_bird_labels.txt \
+  --input test_data/parrot.jpg
